@@ -11,10 +11,10 @@ int main(int ac, char **av)
 	int		i[4] = {0};
 	char	*line;
 	int		c;
-	int		debug_leaks = 0;
+	int		infinite_loop = 0;
 
 	if (ac == 2 && av[1][0] == '-' && av[1][1] == 'l')
-		debug_leaks = 1;
+		infinite_loop = 1;
 	printf("file descriptors: %d, %d, %d, %d\n", fd[0], fd[1], fd[2], fd[3]);
 	while (exit[0] > 0 || exit[1] > 0 || exit[2] > 0)
 	{
@@ -30,11 +30,11 @@ int main(int ac, char **av)
 			printf("%03d %d fd:%d [%s]\n", ++i[c], exit[c], fd[c], line);
 			if (exit[c] == 0)
 				fd[c] = -1;
-			if (debug_leaks && line)
+			if (infinite_loop && line)
 				free(line);
 		}
 	}
-	if (debug_leaks)
+	if (infinite_loop)
 	{
 		printf("\x1b[32minfinite loop...\n\x1b[37m");
 		while (1) ;
