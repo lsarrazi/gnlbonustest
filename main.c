@@ -1,28 +1,45 @@
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
 
-int main(void)
+int main(int ac, char **av)
 {
-	int fd[] = {open("./get_next_line.h", O_RDONLY), open("./main.c", O_RDONLY), open("./get_next_line.c", O_RDONLY)};
-	int exit[3] = {1, 1, 1};
-	int i[3] = {0};
-	char *line;
-	int c;
+	int		fd[] = {open("./get_next_line_bonus.h", O_RDONLY), open("./main.c", O_RDONLY), 
+	open("./get_next_line_bonus.c", O_RDONLY), open("./get_next_line_utils_bonus.c", O_RDONLY)};
+	int		exit[4] = {1, 1, 1, 1};
+	int		i[4] = {0};
+	char	*line;
+	int		c;
+	int		debug_leaks = 0;
 
-	printf("%d:%d:%d", fd[0], fd[1], fd[2]);
+	if (ac == 2 && av[1][0] == '-' && av[1][1] == 'l')
+		debug_leaks = 1;
+	printf("file descriptors: %d, %d, %d, %d\n", fd[0], fd[1], fd[2], fd[3]);
 	while (exit[0] > 0 || exit[1] > 0 || exit[2] > 0)
 	{
-		c = rand() % 3;
-		exit[c] = get_next_line(fd[c], &line);
-		if (exit[c] == -1)
+		c = rand() % 4;
+		if (fd[c] != -1)
 		{
-			printf("\x1b[31m-1 error on %d %d\x1b[37m", c, fd[c]);
-			return (1);
+			exit[c] = get_next_line(fd[c], &line);
+			if (exit[c] == -1)
+			{
+				printf("\x1b[31m-1 error on %d %d\x1b[37m", c, fd[c]);
+				return (1);
+			}
+			printf("%03d %d fd:%d [%s]\n", ++i[c], exit[c], fd[c], line);
+			if (exit[c] == 0)
+				fd[c] = -1;
+			if (debug_leaks && line)
+				free(line);
 		}
-		printf("%03d fd:%d [%s]\n", ++i[c], c, line);
 	}
-	printf("\x1b[32mdone.\n\x1b[37m");
+	if (debug_leaks)
+	{
+		printf("\x1b[32minfinite loop...\n\x1b[37m");
+		while (1) ;
+	}
+	else
+		printf("\x1b[32mdone.\n\x1b[37m");
 	return (0);
 }
