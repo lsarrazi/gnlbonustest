@@ -1,5 +1,6 @@
-## 42 get next line bonus test
+# 42 get next line bonus test
 
+to use inside the cloned repo:
 ```
 git clone https://github.com/lsarrazi/gnlbonustest.git
 && cd gnlbonustest
