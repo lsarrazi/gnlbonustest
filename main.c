@@ -3,10 +3,12 @@
 #include <unistd.h>
 #include <stdio.h>
 
+char	*files[] = {"./get_next_line_bonus.h", "./main.c", "./get_next_line_bonus.c", "./get_next_line_utils_bonus.c"};
+
 int main(int ac, char **av)
 {
-	int		fd[] = {open("./get_next_line_bonus.h", O_RDONLY), open("./main.c", O_RDONLY), 
-	open("./get_next_line_bonus.c", O_RDONLY), open("./get_next_line_utils_bonus.c", O_RDONLY)};
+	int		fd[] = {open(files[0], O_RDONLY), open(files[1], O_RDONLY), 
+	open(files[2], O_RDONLY), open(files[3], O_RDONLY)};
 	int		exit[4] = {1, 1, 1, 1};
 	int		i[4] = {0};
 	char	*line;
@@ -16,7 +18,7 @@ int main(int ac, char **av)
 	if (ac == 2 && av[1][0] == '-' && av[1][1] == 'l')
 		infinite_loop = 1;
 	printf("file descriptors: %d, %d, %d, %d\n", fd[0], fd[1], fd[2], fd[3]);
-	while (exit[0] > 0 || exit[1] > 0 || exit[2] > 0)
+	while (exit[0] > 0 || exit[1] > 0 || exit[2] > 0 || exit[3] > 0)
 	{
 		c = rand() % 4;
 		if (fd[c] != -1)
